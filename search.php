@@ -33,7 +33,7 @@
     }
 ?>
 <?php
-    $scraped_page = curl("https://www.youtube.com/results?search_query=bts");
+    $scraped_page = curl("https://www.youtube.com/results?search_query='.$_GET['q'].'");
     $results_page = scrape_between($scraped_page, "var ytInitialData =",";</script>"); // Scraping out only the middle section of the results page that contains our results
    //echo $results_page;
        $json = json_decode($results_page,true);
