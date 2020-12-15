@@ -1,7 +1,5 @@
 <?php
-   
-   header('Content-type: application/json');
-   // Defining the basic cURL function
+    // Defining the basic cURL function
     function curl($url) {
         // Assigning cURL options to an array
         $options = Array(
@@ -37,24 +35,31 @@
     $results_page = scrape_between($scraped_page, "var ytInitialData =",";</script>"); // Scraping out only the middle section of the results page that contains our results
    //echo $results_page;
        $json = json_decode($results_page,true);
-       
-//print_r($json);
+//print_r($results_page);
+$mystring = $results_page;
+$findme   = 'carouselAdRenderer';
+$pos = strpos($mystring, $findme);
 
-
+if ($pos === false) {
+    $listing = $json['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents'];
+} else {
 $listing = $json['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents'][1]['itemSectionRenderer']['contents'];
+}
+
 
       $k = 0;
         $data = [];
 
       foreach ($listing as $dataz) {
-
+                  if(isset($dataz['videoRenderer']['videoId'])){
             @$data[$k]['id'] .= $dataz['videoRenderer']['videoId'];
             @$data[$k]['title'] .= $dataz['videoRenderer']['title']['runs'][0]['text'];
             @$data[$k]['duration'] .= $dataz['videoRenderer']['lengthText']['accessibility']['accessibilityData']['label'];
             @$data[$k]['channel'] .= $dataz['videoRenderer']['shortBylineText']['runs'][0]['text'];
+            @$data[$k]['upload'] .= $dataz['videoRenderer']['publishedTimeText']['simpleText'];
             @$data[$k]['view'] .= $dataz['videoRenderer']['viewCountText']['simpleText'];
             $k++;
-            }
+            }  }
 
  echo '{ "status" : "success", "items" :' . json_encode($data, JSON_UNESCAPED_UNICODE) . '}';
 
